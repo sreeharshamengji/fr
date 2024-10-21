@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marks Card</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="menu">
+        <ul>
+            <li><a href="generate_test.html">Generate Test</a></li>
+            <li><a href="test.html">Test</a></li>
+            <li><a href="markscard.html">Marks Card</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Marks Card</h2>
+        <p id="totalScore"></p>
+        <div id="questionResults"></div>
+        <button onclick="goBackToTest()">Back to Test</button>
+    </div>
+
+    <script>
+        // Function to load the marks card data
+        window.onload = function() {
+            const marksCard = JSON.parse(localStorage.getItem('marksCard'));
+
+            // Check if marks card data is available
+            if (marksCard) {
+                // Display total score
+                document.getElementById('totalScore').innerText = `Total Score: ${marksCard.totalScore}`;
+
+                // Display individual question results
+                const questionResults = document.getElementById('questionResults');
+                marksCard.marks.forEach((mark, index) => {
+                    const resultItem = document.createElement('div');
+                    resultItem.innerHTML = `
+                        <h4>Question ${index + 1}: ${mark.question}</h4>
+                        <p>Result: ${mark.result}</p>
+                        ${mark.result === 'Incorrect' ? `<p>Hint: ${mark.hint}</p>` : ''}
+                    `;
+                    questionResults.appendChild(resultItem);
+                });
+            } else {
+                alert('No marks card data found. Please ensure the test was submitted.');
+            }
+        };
+
+        // Function to go back to the test
+        function goBackToTest() {
+            window.location.href = 'test.html';
+        }
+    </script>
+</body>
+</html>

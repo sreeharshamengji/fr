@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="menu">
+        <ul>
+            <li><a href="generate_test.html">Generate Test</a></li>
+            <li><a href="test.html">Test</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h2 id="testSubject">Test: </h2>
+        <h3 id="testTime">Time: </h3>
+        <button id="startTestButton" onclick="startTest()">Start Test</button>
+
+        <div id="questionContainer" style="display: none;">
+            <h4 id="questionText"></h4>
+            <ul id="optionsList"></ul>
+
+            <button id="prevButton" style="display: none;" onclick="prevQuestion()">Previous</button>
+            <button id="nextButton" onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+    <script>
+        let testData = {};
+let currentQuestionIndex = 0;
+let shuffledQuestions = [];
+
+
+// Function to start the test
+function startTest() {
+    // Load test data from localStorage
+    const storedData = localStorage.getItem('testData');
+    if (storedData) {
+        testData = JSON.parse(storedData);
+
+        // Shuffle the questions to jumble the order
+        shuffledQuestions = shuffleArray(testData.questions);
+
+        // Hide the start button and show the question container
+        document.getElementById('startTestButton').style.display = 'none';
+        document.getElementById('questionContainer').style.display = 'block';
+
+        // Display the subject and time
+        document.getElementById('testSubject').innerText = `Test: ${testData.subject}`;
+        document.getElementById('testTime').innerText = `Time: ${testData.time} minutes`;
+
+        // Display the first question
+        displayQuestion(currentQuestionIndex);
+    } else {
+        alert('No test data found. Please generate a test first.');
+    }
+}
+
+// Function to display a question
+function displayQuestion(index) {
+    const questionData = shuffledQuestions[index];
+    document.getElementById('questionText').innerText = `Question ${index + 1}: ${questionData.question}`;
+
+    const optionsList = document.getElementById('optionsList');
+    optionsList.innerHTML = '';  // Clear previous options
+
+    // Display options as radio buttons
+    questionData.options.forEach((option, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<input type="radio" name="option" value="${idx}"> ${option}`;
+        optionsList.appendChild(li);
+    });
+
+    // Control the visibility of the "Previous" button
+    document.getElementById('prevButton').style.display = index === 0 ? 'none' : 'inline-block';
+    document.getElementById('nextButton').innerText = index === shuffledQuestions.length - 1 ? 'Submit' : 'Next';
+}
+
+// Function to go to the next question
+function nextQuestion() {
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion(currentQuestionIndex);
+    } else {
+        // Submit the test when all questions are answered
+        submitTest();
+    }
+}
+
+// Function to go to the previous question
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        displayQuestion(currentQuestionIndex);
+    }
+}
+
+// Shuffle function to jumble questions
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+function submitTest() {
+    const userAnswers = [];
+    const marks = [];
+    let totalScore = 0;
+
+    // Loop through each question and check the user's selected answer
+    shuffledQuestions.forEach((question, index) => {
+        const selectedOption = document.querySelector(`input[name="option${index}"]:checked`); // Update to handle each question's options individually
+        
+        if (selectedOption) {
+            userAnswers.push(parseInt(selectedOption.value) + 1); // Answer is 1-4
+        } else {
+            userAnswers.push(null); // If no answer selected
+        }
+
+        // Compare the user's answer with the correct answer
+        if (userAnswers[index] === parseInt(question.correct)) {
+            totalScore += 1;
+            marks.push({ question: question.question, result: 'Correct' });
+        } else {
+            marks.push({ question: question.question, result: 'Incorrect', hint: question.hint });
+        }
+    });
+
+    // Log marks and score to verify it's correct
+    console.log('Marks Data: ', { totalScore, marks });
+
+    // Save the score and marks in localStorage
+    localStorage.setItem('marksCard', JSON.stringify({ totalScore, marks }));
+
+    // Redirect to the marks card page
+    window.location.href = 'markscard.html';
+}
+
+
+
+
+
+    </script>
+</body>
+</html>

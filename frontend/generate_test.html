@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Test</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="menu">
+        <ul>
+            <li><a href="generate_test.html">Generate Test</a></li>
+            <li><a href="test.html">Test</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Generate Test</h2>
+        <form id="generateTestForm">
+            <label for="subject">Subject Name:</label>
+            <input type="text" id="subject" name="subject" required><br><br>
+
+            <label for="numQuestions">Number of Questions:</label>
+            <input type="number" id="numQuestions" name="numQuestions" required><br><br>
+
+            <label for="time">Time (in minutes):</label>
+            <input type="number" id="time" name="time" required><br><br>
+
+            <div id="questionsContainer"></div>
+
+            <button type="button" id="generateBtn" onclick="generateQuestionInputs()">Generate Questions</button><br><br>
+
+            <button type="submit">Save Test</button>
+        </form>
+    </div>
+    
+</body>
+</html>
